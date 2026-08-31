@@ -603,6 +603,7 @@ dependencies = [
     { name = "google-auth-oauthlib" },
     { name = "html2text", version = "2024.2.26", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "html2text", version = "2025.4.15", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+    { name = "oauthlib" },
     { name = "python-dateutil" },
     { name = "pyyaml" },
 ]
@@ -644,6 +645,7 @@ requires-dist = [
     { name = "html2text", specifier = ">=2024.2.26" },
     { name = "isort", marker = "extra == 'dev'", specifier = ">=5.0.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "oauthlib", specifier = ">=3.0.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=7.0.0" },

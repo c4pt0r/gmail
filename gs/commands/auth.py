@@ -18,8 +18,14 @@ def auth():
     "--auth-token", type=click.Path(exists=True), help="Service account key file"
 )
 @click.option("--force-headless", is_flag=True, help="Console-based auth (no browser)")
+@click.option(
+    "--callback-url",
+    metavar="URL",
+    help="Finish a headless login: the URL the browser was redirected to "
+    "(a bare authorization code also works)",
+)
 @click.pass_context
-def auth_login(ctx, credentials, auth_token, force_headless):
+def auth_login(ctx, credentials, auth_token, force_headless, callback_url):
     """Authenticate and cache a token (covers Gmail, Calendar, and Drive)."""
     a = get_auth(
         ctx,
@@ -27,7 +33,10 @@ def auth_login(ctx, credentials, auth_token, force_headless):
         auth_token=auth_token,
         force_headless=force_headless,
     )
-    a.login()
+    if callback_url:
+        a.complete_login(callback_url)
+    else:
+        a.login()
     # Confirm by reading the profile.
     profile = a.service("gmail", "v1").users().getProfile(userId="me").execute()
     click.echo(f"Logged in as {profile.get('emailAddress')}")

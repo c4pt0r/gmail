@@ -54,11 +54,43 @@ gs drive ls
 | `gs auth login --credentials <file>` | Authenticate and cache a token |
 | `gs auth login --auth-token <key.json>` | Service account (servers; domain-wide delegation) |
 | `gs auth login --force-headless` | Console-based auth (no browser, e.g. SSH) |
+| `gs auth login --callback-url <url>` | Finish a headless login from the redirected URL |
 | `gs auth status` | Show whether logged in and as which account |
 | `gs auth logout` | Remove the cached token |
 
 Other commands reuse the cached token; if it's missing they tell you to run
 `gs auth login`.
+
+### Authorizing from another machine
+
+Google redirects to `http://localhost:<port>` — *the browser's* localhost. When
+the browser is somewhere else (SSH session, container, remote desktop), that
+redirect never reaches `gs`, so `gs auth login` accepts the callback by hand:
+
+```
+$ gs auth login --credentials credentials.json
+Please visit this URL to authorize this application:
+
+   https://accounts.google.com/o/oauth2/auth?...
+
+Waiting for the browser to come back...
+If you authorized on another machine, paste the URL it was redirected to here
+and press Enter:
+```
+
+Authorize in whatever browser you have, let the redirect fail, and paste that
+failed page's address from the address bar. `gs` takes the whole URL or just the
+`code=` value.
+
+`--force-headless` skips the local server entirely and only prints the URL — use
+it when nothing can reach this machine's ports. If the terminal isn't around to
+paste into (a script, a detached run), the login is saved and you finish it
+separately:
+
+```bash
+gs auth login --credentials credentials.json --force-headless
+gs auth login --callback-url 'http://localhost:47893/?state=...&code=...'
+```
 
 ### Global options
 

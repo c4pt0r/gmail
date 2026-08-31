@@ -69,21 +69,26 @@ def cli(ctx, **kwargs):
 
 # Register sibling subgroups
 from .commands.auth import auth  # noqa: E402
-from .commands.gmail_group import gmail  # noqa: E402
 from .commands.calendar import calendar  # noqa: E402
 from .commands.drive import drive  # noqa: E402
+from .commands.gmail_group import gmail  # noqa: E402
 
 for _group in (auth, gmail, calendar, drive):
     cli.add_command(_group)
 
 
 def main():
-    """Entry point that maps interrupts to a clean exit code."""
+    """Entry point that maps interrupts and auth failures to clean exits."""
+    from .auth import NotAuthenticatedError
+
     try:
         cli(standalone_mode=True)
     except KeyboardInterrupt:
         click.echo("\nStopped by user", err=True)
         sys.exit(0)
+    except NotAuthenticatedError as e:
+        click.echo(str(e), err=True)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
